@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { isAuthenticated, getCurrentUser } from '@/services/api';
+import Sidebar from '@/components/Sidebar';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -55,7 +56,13 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
     );
   }
 
-  return <>{children}</>;
+  // Only render the Sidebar if we're not on the login page
+  return (
+    <>
+      {pathname !== '/login' && <Sidebar />}
+      {children}
+    </>
+  );
 };
 
 export default AuthGuard;
