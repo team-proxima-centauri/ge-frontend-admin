@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Package, RefreshCw } from 'lucide-react';
+import Link from 'next/link';
 import { Order, getOrders } from '@/services/api';
 
 const OrderTable = () => {
@@ -96,8 +97,10 @@ const OrderTable = () => {
             <tbody className="bg-white divide-y divide-gray-200">
               {orders.map((order) => (
                 <tr key={order.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {order.id}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
+                    <Link href={`/orders/${order.id}`} className="hover:underline">
+                      {order.id}
+                    </Link>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {order.user_name ? `${order.user_name} (${order.email})` : order.owner_id}

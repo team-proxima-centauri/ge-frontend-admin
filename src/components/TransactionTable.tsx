@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { CreditCard, RefreshCw } from 'lucide-react';
 import { Transaction, getTransactions } from '@/services/api';
+import Link from 'next/link';
 
 const TransactionTable = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -97,7 +98,9 @@ const TransactionTable = () => {
                     {tx.id}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
-                    {tx.order_id}
+                    <Link href={`/orders/${tx.order_id}`} className="hover:underline">
+                      {tx.order_id}
+                    </Link>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {tx.payment_provider}
