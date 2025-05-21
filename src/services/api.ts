@@ -534,7 +534,7 @@ export const getTransactions = async (): Promise<Transaction[]> => {
 };
 
 // --- Order details interface with cart items and other relevant information
-interface OrderDetails extends Order {
+export interface OrderDetails extends Order {
   cart_items?: Array<{
     id: string;
     product_id: string;
