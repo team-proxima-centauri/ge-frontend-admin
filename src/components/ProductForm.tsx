@@ -2,33 +2,48 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Upload } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Product, createProduct, getProduct, updateProduct } from '@/services/api';
+import { uploadImageToCloudinary } from '@/utils/cloudinary';
 
 interface ProductFormProps {
   productId?: string;
   isEditMode?: boolean;
 }
 
-const CATEGORIES = [
-  'Fruits',
-  'Vegetables',
-  'Meat',
-  'Seafood',
-  'Dairy',
-  'Bakery',
-  'Beverages',
-  'Snacks',
-  'Frozen Foods',
-  'Canned Goods',
-  'Grains',
-  'Condiments',
-  'Household',
-  'Personal Care',
-  'Other'
-];
+// Category mapping between frontend IDs and display names
+const CATEGORY_MAPPING: Record<string, string> = {
+  'biscuits_cookies': 'Biscuits & Cookies',
+  'chips_crisps': 'Chips & Crisps',
+  'chocolate_candy': 'Chocolate & Candy',
+  'condiments_spreads': 'Condiments & Spreads',
+  'instant_noodles': 'Instant Noodles',
+  'kids_drinks': 'Kids\'s Drinks',
+  'milk_dairy_alternatives': 'Milk & Dairy Alternatives',
+  'rtd_coffee': 'READY-TO-DRINK COFFEE',
+  'soda_sparkling': 'Soda & Sparkling Drinks',
+  'specialty_snacks': 'SPECIALTY SNACKS',
+  'fruits': 'Fruits',
+  'vegetables': 'Vegetables',
+  'meat_seafood': 'Meat & Seafood',
+  'bakery': 'Bakery',
+  'beverages': 'Beverages',
+  'household': 'Household'
+};
+
+// Reverse mapping for converting display names to frontend IDs
+const REVERSE_CATEGORY_MAPPING: Record<string, string> = {};
+Object.entries(CATEGORY_MAPPING).forEach(([id, name]) => {
+  REVERSE_CATEGORY_MAPPING[name] = id;
+});
+
+// Create category options for the dropdown
+const CATEGORY_OPTIONS = Object.entries(CATEGORY_MAPPING).map(([id, name]) => ({
+  id,
+  name
+}));
 
 const UNITS = [
   'kg',
@@ -51,6 +66,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ productId, isEditMode = false
   const [loading, setLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   
   const [form, setForm] = useState<Omit<Product, 'id' | 'created_at'>>({
     name: '',
@@ -73,12 +89,17 @@ const ProductForm: React.FC<ProductFormProps> = ({ productId, isEditMode = false
         try {
           setLoading(true);
           const productData = await getProduct(productId);
+          
+          // The category in the database should already be the ID (e.g., 'chocolate_candy')
+          const categoryId = productData.category;
+          console.log('Loaded product with category ID from database:', categoryId);
+          
           setForm({
             name: productData.name,
             description: productData.description,
             price: productData.price,
             unit: productData.unit,
-            category: productData.category,
+            category: categoryId,
             stock_quantity: productData.stock_quantity,
             image_url: productData.image_url,
           });
@@ -110,48 +131,55 @@ const ProductForm: React.FC<ProductFormProps> = ({ productId, isEditMode = false
     e.preventDefault();
     setSubmitLoading(true);
     setError(null);
+    setUploadError(null);
     
     try {
       // Handle image upload if there's a new image file
       let updatedForm = { ...form };
+      
+      // We want to store the category ID in the database, not the display name
+      // The form.category value is already the category ID from the dropdown
+      console.log('Submitting product with category ID:', updatedForm.category);
+      
       if (imageFile) {
-        // Create a FormData object to send the file
-        const formData = new FormData();
-        formData.append('image', imageFile);
-        
         try {
           setUploadProgress(10);
+          console.log('Starting image upload to Cloudinary...');
           
-          // Simulate progressive upload (for UI feedback)
-          const progressInterval = setInterval(() => {
-            setUploadProgress(prev => {
-              if (prev >= 90) {
-                clearInterval(progressInterval);
-                return 90;
-              }
-              return prev + 10;
-            });
-          }, 300);
+          // Upload image to Cloudinary
+          const uploadResult = await uploadImageToCloudinary(imageFile, (progress) => {
+            setUploadProgress(progress);
+          });
           
-          // For now, use a placeholder URL from a free image hosting service
-          // In a production environment, you would upload to your own storage/CDN
-          const randomId = Math.floor(Math.random() * 1000);
-          const imageUrl = `https://source.unsplash.com/random/300x300?grocery,food,product&sig=${randomId}`;
-          
-          // Wait for simulated upload
-          await new Promise(resolve => setTimeout(resolve, 1500));
-          
-          clearInterval(progressInterval);
-          setUploadProgress(100);
-          
-          // Update form with the image URL
+          // Update form with the Cloudinary image URL
           updatedForm = {
             ...form,
-            image_url: imageUrl
+            image_url: uploadResult.secure_url
           };
+          
+          console.log('Image uploaded successfully to Cloudinary:', uploadResult.secure_url);
+          setUploadProgress(100);
         } catch (uploadErr) {
-          console.error('Error uploading image:', uploadErr);
-          throw new Error('Failed to upload image. Please try again.');
+          console.error('Error uploading image to Cloudinary:', uploadErr);
+          
+          // Provide more specific error message based on the error
+          const errorMessage = uploadErr instanceof Error ? uploadErr.message : 'Unknown error';
+          setUploadError(`Failed to upload image: ${errorMessage}`);
+          
+          // Reset upload progress
+          setUploadProgress(0);
+          
+          // Ask user if they want to continue without the image
+          if (!confirm('Image upload failed. Do you want to continue without the image?')) {
+            setSubmitLoading(false);
+            return; // Stop form submission if user cancels
+          }
+          
+          // Continue with form submission without the image
+          updatedForm = {
+            ...form,
+            image_url: form.image_url || ''
+          };
         }
       }
       
@@ -280,8 +308,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ productId, isEditMode = false
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900"
             >
-              {CATEGORIES.map(category => (
-                <option key={category} value={category}>{category}</option>
+              {CATEGORY_OPTIONS.map((category) => (
+                <option key={category.id} value={category.id}>{category.name}</option>
               ))}
             </select>
           </div>
@@ -292,20 +320,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ productId, isEditMode = false
               <div className="flex-1">
                 <div className="mt-1 flex justify-center px-6 py-6 border-2 border-gray-300 border-dashed rounded-md mb-4 md:mb-0 hover:bg-gray-50 transition">
                   <div className="space-y-1 text-center">
-                    <svg
-                      className="mx-auto h-12 w-12 text-gray-400"
-                      stroke="currentColor"
-                      fill="none"
-                      viewBox="0 0 48 48"
-                      aria-hidden="true"
-                    >
-                      <path
-                        d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                        strokeWidth={2}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                    <Upload className="mx-auto h-12 w-12 text-gray-400" />
                     <div className="flex text-sm text-gray-600">
                       <label
                         htmlFor="file-upload"
@@ -346,6 +361,15 @@ const ProductForm: React.FC<ProductFormProps> = ({ productId, isEditMode = false
                       ></div>
                     </div>
                     <p className="text-xs text-gray-500 text-right mt-1">{uploadProgress}% uploaded</p>
+                  </div>
+                )}
+                
+                {uploadError && (
+                  <div className="mt-2 text-sm text-red-600">
+                    <p className="flex items-center">
+                      <span className="mr-1">⚠️</span>
+                      {uploadError}
+                    </p>
                   </div>
                 )}
                 
