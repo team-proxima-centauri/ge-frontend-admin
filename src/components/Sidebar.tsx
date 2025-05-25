@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 import { ShoppingBag, Users, LayoutDashboard, Package, CreditCard, LogOut } from 'lucide-react';
 import { logout } from '@/services/api';
 
@@ -48,12 +49,26 @@ const Sidebar = () => {
       <div className="flex flex-col h-full">
         <div className="p-4 flex items-center border-b">
           {!collapsed && (
-            <h1 className="text-xl font-semibold text-gray-800">
-              <span className="text-green-600">28</span>ChocoMart
-            </h1>
+            <div className="flex items-center">
+              <h1 className="text-xl font-semibold text-gray-800">
+                <span className="text-green-600">28</span>ChocoMart
+              </h1>
+              <Image 
+                src="https://res.cloudinary.com/dpkfvbpet/image/upload/v1748211287/eb77e0ae-a45e-4a2e-868d-7830b82960b6_cbg1ml.png" 
+                alt="Groceryease Logo" 
+                width={30} 
+                height={30} 
+                className="ml-2"
+              />
+            </div>
           )}
           {collapsed && (
-            <span className="text-xl font-bold text-green-600">28</span>
+            <Image 
+              src="https://res.cloudinary.com/dpkfvbpet/image/upload/v1748211287/eb77e0ae-a45e-4a2e-868d-7830b82960b6_cbg1ml.png" 
+              alt="Groceryease Logo" 
+              width={30} 
+              height={30} 
+            />
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
