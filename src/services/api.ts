@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://127.0.0.1:5000/api'; // Match the IP used in frontend test project
+const API_BASE_URL = 'https://chocomart-backend.onrender.com/api'; // Match the IP used in frontend test project
 
 // --- safeLocalStorage Utility ---
 const safeLocalStorage = {
