@@ -4,7 +4,7 @@
 
 // Cloudinary configuration - make sure these values match your Cloudinary account settings
 const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dpkfvbpet';
-const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'groceryease_products'; // Use 'ml_default' as fallback or set your own unsigned upload preset
+const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || '28chocomart_products'; // Use 'ml_default' as fallback or set your own unsigned upload preset
 
 /**
  * Uploads an image to Cloudinary using the unsigned upload method

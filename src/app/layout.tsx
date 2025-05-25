@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Groceryease Admin',
-  description: 'Admin dashboard for Groceryease',
+  title: '28ChocoMart Admin',
+  description: 'Admin dashboard for 28ChocoMart',
 };
 
 export default function RootLayout({

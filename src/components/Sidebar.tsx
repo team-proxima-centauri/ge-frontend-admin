@@ -49,11 +49,11 @@ const Sidebar = () => {
         <div className="p-4 flex items-center border-b">
           {!collapsed && (
             <h1 className="text-xl font-semibold text-gray-800">
-              <span className="text-green-600">Grocery</span>ease
+              <span className="text-green-600">28</span>ChocoMart
             </h1>
           )}
           {collapsed && (
-            <span className="text-xl font-bold text-green-600">G</span>
+            <span className="text-xl font-bold text-green-600">28</span>
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}

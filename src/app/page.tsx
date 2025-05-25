@@ -83,7 +83,7 @@ export default function AdminDashboardPage() {
   return (
     <div>
       <main className='overflow-y-auto p-6'>
-        <h1 className='text-2xl font-semibold text-gray-800 mb-6'>Groceryease Admin Dashboard</h1>
+        <h1 className='text-2xl font-semibold text-gray-800 mb-6'>28ChocoMart Admin Dashboard</h1>
         
         {loading ? (
           <div className='flex justify-center items-center h-[calc(100vh-100px)]'>

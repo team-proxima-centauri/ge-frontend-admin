@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowLeft, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Upload, ListFilter } from 'lucide-react';
 import Link from 'next/link';
 import ProductTable from '@/components/ProductTable';
+import BulkProductUpload from '@/components/BulkProductUpload';
 
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState<'list' | 'bulk'>('list');
 
   return (
     <div>
@@ -44,8 +46,33 @@ export default function ProductsPage() {
           </div>
         </div>
 
-        <div className='bg-white rounded-lg shadow'>
-          <ProductTable />
+        <div className='bg-white rounded-lg shadow mb-6'>
+          <div className='flex border-b'>
+            <button
+              className={`px-4 py-3 flex items-center ${activeTab === 'list' 
+                ? 'border-b-2 border-green-600 text-green-600 font-medium' 
+                : 'text-gray-600 hover:text-gray-800'}`}
+              onClick={() => setActiveTab('list')}
+            >
+              <ListFilter className='h-5 w-5 mr-2' />
+              Product List
+            </button>
+            <button
+              className={`px-4 py-3 flex items-center ${activeTab === 'bulk' 
+                ? 'border-b-2 border-green-600 text-green-600 font-medium' 
+                : 'text-gray-600 hover:text-gray-800'}`}
+              onClick={() => setActiveTab('bulk')}
+            >
+              <Upload className='h-5 w-5 mr-2' />
+              Bulk Upload
+            </button>
+          </div>
+          
+          {activeTab === 'list' ? (
+            <ProductTable />
+          ) : (
+            <BulkProductUpload />
+          )}
         </div>
       </main>
     </div>
