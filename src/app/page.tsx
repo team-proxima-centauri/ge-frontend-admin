@@ -14,16 +14,16 @@ const DashboardCard = ({ title, value, icon: Icon, change, changeType }: {
   change?: string;
   changeType?: 'positive' | 'negative' | 'neutral';
 }) => (
-  <div className='bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-200'>
+  <div className='bg-groceryease-surface p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-200 border border-groceryease-border'>
     <div className='flex items-center justify-between mb-2'>
-      <h3 className='text-sm font-medium text-gray-500'>{title}</h3>
-      <Icon className='h-5 w-5 text-gray-500' />
+      <h3 className='text-sm font-medium text-groceryease-textSecondary'>{title}</h3>
+      <Icon className='h-5 w-5 text-primary' />
     </div>
-    <p className='text-2xl font-semibold text-gray-800'>{value}</p>
+    <p className='text-2xl font-semibold text-groceryease-text'>{value}</p>
     {change && (
       <p className={`text-xs mt-1 ${
-        changeType === 'positive' ? 'text-green-500' : 
-        changeType === 'negative' ? 'text-red-500' : 'text-gray-500'
+        changeType === 'positive' ? 'text-status-success' : 
+        changeType === 'negative' ? 'text-status-error' : 'text-groceryease-textSecondary'
       }`}>
         {change} from last month
       </p>
@@ -83,11 +83,11 @@ export default function AdminDashboardPage() {
   return (
     <div>
       <main className='overflow-y-auto p-6'>
-        <h1 className='text-2xl font-semibold text-gray-800 mb-6'>28ChocoMart Admin Dashboard</h1>
+        <h1 className='text-2xl font-semibold text-groceryease-text mb-6'>28ChocoMart Admin Dashboard</h1>
         
         {loading ? (
           <div className='flex justify-center items-center h-[calc(100vh-100px)]'>
-            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-green-500'></div>
+            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
           </div>
         ) : (
           <>
