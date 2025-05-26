@@ -45,13 +45,13 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className={`bg-white shadow-md h-screen transition-all duration-300 ${collapsed ? 'w-16' : 'w-64'}`}>
+    <aside className={`bg-groceryease-surface shadow-md h-screen transition-all duration-300 ${collapsed ? 'w-16' : 'w-64'}`}>
       <div className="flex flex-col h-full">
-        <div className="p-4 flex items-center border-b">
+        <div className="p-4 flex items-center border-b border-groceryease-border">
           {!collapsed && (
             <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-800">
-                <span className="text-green-600">28</span>ChocoMart
+              <h1 className="text-xl font-semibold text-groceryease-text">
+                <span className="text-primary">28</span>ChocoMart
               </h1>
               <Image 
                 src="https://res.cloudinary.com/dpkfvbpet/image/upload/v1748211287/eb77e0ae-a45e-4a2e-868d-7830b82960b6_cbg1ml.png" 
@@ -72,7 +72,7 @@ const Sidebar = () => {
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="ml-auto text-gray-500 hover:text-gray-700"
+            className="ml-auto text-groceryease-textSecondary hover:text-primary"
           >
             {collapsed ? '→' : '←'}
           </button>
@@ -85,8 +85,8 @@ const Sidebar = () => {
                 <Link
                   href={item.path}
                   className={`
-                    flex items-center px-4 py-3 text-gray-700 hover:bg-green-50 hover:text-green-600
-                    ${pathname === item.path ? 'bg-green-50 text-green-600 border-l-4 border-green-600' : ''}
+                    flex items-center px-4 py-3 text-groceryease-text hover:bg-secondary hover:text-primary
+                    ${pathname === item.path ? 'bg-secondary text-primary border-l-4 border-primary' : ''}
                   `}
                 >
                   <span className="mr-3">{item.icon}</span>
@@ -97,10 +97,10 @@ const Sidebar = () => {
           </ul>
         </nav>
 
-        <div className="p-4 border-t">
+        <div className="p-4 border-t border-groceryease-border">
           <button
             onClick={handleLogout}
-            className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded"
+            className="flex items-center w-full px-4 py-2 text-groceryease-text hover:bg-status-error hover:text-white rounded"
           >
             <LogOut className="w-5 h-5 mr-3" />
             {!collapsed && <span>Logout</span>}
